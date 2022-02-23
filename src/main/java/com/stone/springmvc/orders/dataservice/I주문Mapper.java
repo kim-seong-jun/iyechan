@@ -11,7 +11,6 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.stone.springmvc.board.common.Board;
 import com.stone.springmvc.orders.common.Orders;
 
 @Mapper
@@ -23,7 +22,7 @@ public interface I주문Mapper {
 	void save(Orders order);		
 
 	//주문서 전체조회 
-	@Select("select * from orders order by regDate desc")
+	@Select("select * from orders where member = #{loginMember} order by regDate desc")
 	@Results(value= {
 			@Result(property="orderNo", column="orderNo"),
 			@Result(property="member", column="member",one=@One(select="com.stone.springmvc.member.dataservice.I회원Mapper.findByNo")),
@@ -41,7 +40,7 @@ public interface I주문Mapper {
 			@Result(property="chgDate", column="chgDate"),
 			@Result(property="status", column="status")
 			})
-	List<Orders> selectAll();
+	List<Orders> selectAll(int loginMember);
 	
 	//주문서 조회 
 	@Select("select * from orders where orderNo=#{orderNo} and status<>4")

@@ -16,7 +16,9 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <link href="/css/style_main.css" rel="stylesheet" type="text/css" />	
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>	
+  <link href="/css/style_main.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="/js/main.js"></script>
 </head>
 <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50">
 
@@ -168,11 +170,13 @@
         </div>
       </div>
 	</div>
+    <%if(isLogin){ %>
     <div class="row">
 	  <div class="col-sm-12">
 	          <button class="btn pull-right" data-toggle="modal" data-target="#myModal">주문하기</button>
 	  </div>
     </div>
+    <%} %>
   </div>
   
   <!-- Modal 주문서작성-->
@@ -203,16 +207,18 @@
             </div>
             <div class="form-group">
               <label for="post"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;&nbsp;배송지</label><br>
-              <label for="post">&nbsp;&nbsp;&nbsp;우편번호</label>&nbsp;&nbsp;&nbsp;
-              <input type="text" class="form-control" id="post" name="post" placeholder="ex)10563">
             </div>
             <div class="form-group">
-              <label class="" for="address">&nbsp;&nbsp;&nbsp;주소</label>
-              <input type="text" class="form-control" id="address" name="address" placeholder="ex)경기도 고양시 덕양구 권율대로671">
+              <input type="text" class="form-control-inline" id="post" name="post" readonly>
+              <button type="button" onclick="findPost()" class="btn-primary btn-xs">주소검색</button>
+            </div>
+			<div class="form-group">              
+              <input type="text" class="form-control" id="address" name="address" readonly >
             </div>
             <div class="form-group">
-              <input type="text" class="form-control" id="detailAddress" name="detailAddress" placeholder="ex)0000동 0000호">
+              <input type="text" class="form-control" id="detailAddress" name="detailAddress" placeholder="상세주소를 입력해주세요." >
             </div>
+            
             <div class="form-group">
               <label for="password"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;&nbsp;공동현관 비밀번호</label>
               <input type="text" class="form-control" id="password" name="password" placeholder="ex)1001 누르고  1234#">
@@ -235,18 +241,10 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">
-            <span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;&nbsp;취소
-          </button>
-          <p><a href="#">도움말</a></p>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-<div class="alert alert-primary" role="alert">
-  A simple primary alert with <a href="#" class="alert-link">an example link</a>. Give it a click if you like.
 </div>
 
 <!-- Container (The board Section) -->
@@ -416,10 +414,11 @@
 			      <th>아이이름</th>
 			      <th>주문일자</th>
 			      <th>상태</th>
+			      <th></th>
 		      </tr>
 		    </thead>
     
-			<!-- 게시물이 출력될 영역 -->
+			<!-- 주문내역이 출력될 영역 -->
 			<tbody id="ordersData"></tbody>
 	
 		 </table>
@@ -441,215 +440,6 @@
   </a><br><br>
   <p>고객센터 전화번호    080-456-7890<br>경기도 고양시 권율대로 671 아이예찬   대표이사 김성준</p> 
 </footer>
-
-<script>
-$(document).ready(function(){ 
-  
-  getBoardData();	
-	
-  //알러지 상세 - 숨기기를 기본값
-  $('#allergieName').hide();
-  
-  // Initialize Tooltip
-  $('[data-toggle="tooltip"]').tooltip(); 
-  
-  // Add smooth scrolling to all links in navbar + footer link
-  $(".navbar a, footer a[href='#myPage']").on('click', function(event) {
-
-    // Make sure this.hash has a value before overriding default behavior
-    if (this.hash !== "") {
-
-      // Prevent default anchor click behavior
-      event.preventDefault();
-
-      // Store hash
-      var hash = this.hash;
-
-      // Using jQuery's animate() method to add smooth page scroll
-      // The optional number (900) specifies the number of milliseconds it takes to scroll to the specified area
-      $('html, body').animate({
-        scrollTop: $(hash).offset().top
-      }, 900, function(){
-   
-        // Add hash (#) to URL when done scrolling (default click behavior)
-        window.location.hash = hash;
-      });
-    } // End if
-  });
-})
-
-//알레르기 유무에 따라 상세내용입력란 보여주기
-function setDisplay(){
-    if($('input:radio[id=isAllergieT]').is(':checked')){
-        $('#allergieName').show();
-    }else{
-        $('#allergieName').hide();
-        $('#allergieName').val('');
-    }
-}
-
-//주문서 데이터 요청
-$("#orders").click(function(){
-	let memberNo = 
-	$.ajax({
-		url :"/orders",
-		type:"POST",
-		contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
-		dataType:"json",
-		success : function(res) {
-			const orderList = res;
-		
-			var data = "";
-			// 테이블의 row를 삽입하는 부분
-			for (var i = 0; i < orderList.length; i++) {
-				data += "<tr>"; 
-				data += "<td>" + orderList[i].orderNo + "</td>";
-				data += "<td>" + orderList[i].member.name + "</td>";
-				data += "<td>" + orderList[i].name + "</td>";
-				const d = new Date(orderList[i].regDate);
-				data += "<td>" + d.toLocaleDateString() + "</td>";
-				data += "<td>" + getStatus(orderList[i].status) + "</td>";
-				data += "</tr>";
-			}
-			
-			$("#ordersData").html(data);
-		}
-	})
-
-})
-
-function getStatus(status) {
-	switch (status) {
-	  case 0: return "임시저장";
-	  case 1: return "주문저장";
-	  case 2: return "배송준비";
-	  case 3: return "배송중";
-	  case 4: return "배송완료";
-	  case 5: return "취소";
-	  default:
-	    return "" 
-	}
-}
-
-//내정보 요청
-$("#myinfo").click(function(){
-	$.ajax({
-		url :"/member",
-		type:"POST",
-		contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
-		dataType:"json",
-		success : function(res) {
-			const member = res;
-
-			var data = "";
-			
-			data += member.id;
-			data += member.name;
-			data += member.name;
-			data += member.tel;
-			data += member.email;
-			data += member.post;
-			data += member.address;
-			data += member.detailAddress;
-			
-			$("#myinfoData").html(data);
-		}
-	})
-})
-
-//게시판 목록 요청
-function getBoardData(page) {
-// 	var search = $("#searchInput").val();
-	let listSize = $("#listSize").val();
-	let pageInfo={page:page, listSize:listSize}
-	$
-			.ajax({
-				url :"/boards", 				//서비스 주소
-				type:"POST",
-				contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
-				data : JSON.stringify(pageInfo),
-				dataType:"json",
-				success : function(res) {
-					const resData = res;
-					
-					let boards = resData.boardList;
-					let 현제페이지번호 = resData.pageNo;
-					let 마지막페이지번호 = resData.lastPageNo;
-					let 블럭당최대페이지수=listSize;
-					let 블럭시작페이지번호=현제페이지번호-(현제페이지번호-1)%블럭당최대페이지수;
-					let 예상블럭끝페이지번호=블럭시작페이지번호+(블럭당최대페이지수-1);
-					let 블럭끝페이지번호=(예상블럭끝페이지번호<=마지막페이지번호)?예상블럭끝페이지번호:마지막페이지번호;
-					
-					var data = "";
-					var block = "";
-
-					//테이블의 row를 삽입
-					for (var i = 0; i < boards.length; i++) {
-						data += "<tr>"; 
-						data += "<td>" + (i+1) + "</td>";
-						data += "<td>" + boards[i].title + "</td>";
-						const d = new Date(boards[i].regdate);
- 						data += "<td>" + d.toLocaleDateString() + "</td>";
-						data += "<td>" + boards[i].writer.name + "</td>";
-						data += "<td>" + boards[i].views + "</td>";
-						data += "</tr>";
-					}
-					//페이지 표시					
-					if(블럭시작페이지번호 > 1){
-						block += "<li><a href='javascript:getBoardData(" + 블럭시작페이지번호-1+ ")'>◀ </a></li>"			
-					}
-					for(var 페이지번호=블럭시작페이지번호; 페이지번호<=블럭끝페이지번호; 페이지번호++){ 
-						var 출력페이지번호=(페이지번호==현제페이지번호)?"["+페이지번호+"]":" "+페이지번호;
-						block += "<li><a href='javascript:getBoardData("+ 페이지번호 + ")'>" + 출력페이지번호 + "</a></li>"
-					}
-					if(블럭끝페이지번호 < 마지막페이지번호){	
-						block += "<li><a href='javascript:getBoardData(" + 블럭끝페이지번호+1 + ")'> ▶ </a></li>"		
-					}	
-
-					$("#boardData").html(data);
-					$("#pageNo").html(block);
-				}
-			})
-}
-
-
-
-<%-- 
-<div class="row">
-<label class="col-sm-3" for="id">&nbsp;&nbsp;&nbsp;ID</label>
-<input class="col-sm-9" type="text" id="id" name="id" value="<%=member.getId() %>" disabled>
-</div>
-<div class="row">
-<label class="col-sm-3" for="password">&nbsp;&nbsp;&nbsp;PASSWORD</label>
-<input class="col-sm-9" type="text" id="password" name="password" value="<%=member.getPassword() %>" disabled>
-</div>
-<div class="row">
-<label class="col-sm-3" for="name">&nbsp;&nbsp;&nbsp;이름</label>
-<input class="col-sm-9" type="text" id="name" name="name" value="<%=member.getName() %>" disabled>
-</div>
-<div class="row">
-<label class="col-sm-3" for="tel">&nbsp;&nbsp;&nbsp;전화번호</label>
-<input class="col-sm-9" type="text" id="tel" name="tel" value="<%=member.getTel() %>" disabled>
-</div>
-<div class="row">
-<label class="col-sm-3" for="email">&nbsp;&nbsp;&nbsp;e-mail</label>
-<input class="col-sm-9" type="text" id="email" name="email" value="<%=member.getEmail() %>" disabled>
-</div>
-<div class="row">
-<label class="col-sm-3" for="post">&nbsp;&nbsp;&nbsp;우편번호</label>
-<input class="col-sm-9" type="text" id="post" name="post" value="<%=member.getPost() %>" disabled>
-</div>
-<div class="row">
-<label class="col-sm-3" for="address">&nbsp;&nbsp;&nbsp;주소</label>
-<input class="col-sm-9" type="text" id="address" name="address" value="<%=member.getAddress() %>" disabled>
-</div>
-<div class="row">
-  <label class="col-sm-3" for="detailAddress"></label>
-<input class="col-sm-9" type="text" id="detailAddress" name="detailAddress" value="<%=member.getDetailAddress() %>" disabled>
-</div>
- --%>
- 
-</script>
 
 </body>
 </html>

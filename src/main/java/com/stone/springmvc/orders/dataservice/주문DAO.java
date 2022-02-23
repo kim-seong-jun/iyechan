@@ -19,8 +19,8 @@ public class 주문DAO implements I주문DAO {
 	}
 
 	@Override
-	public List<Orders> selectOrderList() {
-		return orderDAO.selectAll();
+	public List<Orders> selectOrderList(int loginMember) {
+		return orderDAO.selectAll(loginMember);
 	}
 
 	@Override

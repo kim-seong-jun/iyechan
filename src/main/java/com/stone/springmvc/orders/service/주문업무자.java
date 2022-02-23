@@ -15,12 +15,11 @@ public class 주문업무자 implements I주문업무자 {
 	@Override
 	public void saveOrdersService(Orders newOrder) {
 		주문DAO.saveOrders(newOrder);
-		
 	}
 
 	@Override
-	public List<Orders> selectOrderListService() {
-		return 주문DAO.selectOrderList();
+	public List<Orders> selectOrderListService(int loginMember) {
+		return 주문DAO.selectOrderList(loginMember);
 	}
 
 	@Override
