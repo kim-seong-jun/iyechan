@@ -10,6 +10,7 @@ public class Member {
 	String post;
 	String address;
 	String detailAddress;
+	int status;	//1:정상, 2:탈퇴
 	
 	public int getNo() {
 		return no;
@@ -65,6 +66,13 @@ public class Member {
 	public void setDetailAddress(String detailAddress) {
 		this.detailAddress = detailAddress;
 	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	
 	
 	
 	

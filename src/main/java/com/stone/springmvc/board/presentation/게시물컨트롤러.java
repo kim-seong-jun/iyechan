@@ -37,9 +37,7 @@ public class 게시물컨트롤러 {
 		Member 작성한회원=new Member();
 		작성한회원.setNo(로그인한회원의번호);
 		새게시물.setWriter(작성한회원);
-		
 		게시물업무자.게시물을등록하다(새게시물);
-		
 		
 		return "redirect:/main#board";
 	}
@@ -69,35 +67,6 @@ public class 게시물컨트롤러 {
 		boardList.setPageNo(페이지번호);
 		
 		return boardList; 
-	}
-	
-	//게시물목록출력
-	@RequestMapping("/boards/{페이지번호}")
-	ModelAndView 게시물목록출력하다(@PathVariable int 페이지번호){
-		페이지번호 = (페이지번호 > 0) ? 페이지번호:1;
-		int 페이지당게시물수 = 10;
-		int 범위끝게시물일련번호=페이지당게시물수*페이지번호;
-		//예를들어 페이지가 1이면 범위시작게시물일련번호 1 범위끝 게시물일련번호 5
-		//           2                  6               10
-		//           3                  11              15 
-		int 시작게시물일련번호= 범위끝게시물일련번호-(페이지당게시물수-1);
-		System.out.println("페이지번호 = " + 페이지번호);
-		System.out.println("범위끝게시물일련번호::: = " + 범위끝게시물일련번호);
-		System.out.println("시작게시물일련번호 = " + 시작게시물일련번호);
-
-		Object[] 수집된게시물들과게시물수 = 게시물업무자.게시물목록을수집하다(시작게시물일련번호, 페이지당게시물수);
-
-		int 수집된게시물수=(int)수집된게시물들과게시물수[1];		//수집된 전체 게시물수
-		int 마지막페이지번호=(int)Math.ceil((double)수집된게시물수/페이지당게시물수);
-		//int 마지막페이지번호=(int)(수집된게시물수/페이지당게시물수)+((수집된게시물수%페이지당게시물수>0)?1:0);
-		
-		ModelAndView modelAndView = new ModelAndView();
-		//modelAndView.setViewName("redirect:/main#board");
-		modelAndView.addObject("boards",수집된게시물들과게시물수[0]);
-		modelAndView.addObject("pageNo", 페이지번호);
-		modelAndView.addObject("lastPageNo", 마지막페이지번호);
-		
-		return modelAndView;
 	}
 	
 	//게시물상세정보

@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `db10`.`member` (
   `post` VARCHAR(45) NULL,
   `address` VARCHAR(45) NULL,
   `detailAddress` VARCHAR(45) NULL,
+  `status` INT NULL,
   PRIMARY KEY (`no`))
 ENGINE = InnoDB;
 
@@ -34,7 +35,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `db10`.`board`
 -- -----------------------------------------------------
-drop table `db10`.`board`;
 CREATE TABLE IF NOT EXISTS `db10`.`board` (
   `no` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(45) NULL,
@@ -81,6 +81,20 @@ CREATE TABLE IF NOT EXISTS `db10`.`orders` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `db10`.`menu`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `db10`.`menu` (
+  `no` INT NOT NULL AUTO_INCREMENT,
+  `week` INT NOT NULL,
+  `menuSeq` INT NULL,
+  `menuName` VARCHAR(45) NULL,
+  `menuImg` BLOB NULL,
+  `menuDetail` VARCHAR(300) NULL,
+  `regDate` DATETIME NULL,
+  PRIMARY KEY (`no`))
+ENGINE = InnoDB;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
@@ -101,4 +115,10 @@ insert into board(title,contents,writer,regdate) values('제목3','내용3',3,sy
 use db10;
 select * from member;
 select * from board;
+delete  from board;
 select * from orders;
+select * from menu;
+
+delete from board where no=2;
+select no from member where id="guest";
+update member set no=0 where id="guest";

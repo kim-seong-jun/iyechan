@@ -54,7 +54,6 @@ public interface I게시물Mapper {
 	//게시물 상세조회
 	//조회수 증가
 	@Update("update board set views=views+1 where no=#{no}")
-	
 	void updateViews(int no);
 	//게시물 찾기
 	@Select("select * from board where no=#{no}")
