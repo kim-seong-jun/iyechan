@@ -27,15 +27,11 @@ public class 게시물DAO implements I게시물DAO {
 	
 	@Override
 	public Object[] 수집하다(int 시작게시물일련번호, int 최대수집크기) {
-		System.out.println("in 수집하다");
-		System.out.println("시작게시물일련번호 = " + 시작게시물일련번호);
-		System.out.println("최대수집크기 = " + 최대수집크기);
 		
 		List<Board> 게시물들 =new ArrayList<Board>();		
 		int 수집된게시물수=0;
 		
 		수집된게시물수 = boardDAO.selectCount();
-		System.out.println("수집된게시물수 = " + 수집된게시물수);
 		
 		게시물들 = boardDAO.selectByPage(시작게시물일련번호-1, 최대수집크기);
 		Object 게시물들과수집된게시물수[] = {게시물들, 수집된게시물수};

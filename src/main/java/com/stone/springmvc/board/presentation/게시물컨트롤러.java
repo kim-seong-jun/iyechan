@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -26,20 +25,24 @@ import com.stone.springmvc.member.common.Member;
 public class 게시물컨트롤러 { 
 	@Autowired I게시물업무자 게시물업무자;
 	
-	//게시물등록
+	//게시물등록(비동기요청)
 	@PostMapping("/board")
-	public String 게시물을등록하다(Board 새게시물, HttpSession session) {
-		int 로그인한회원의번호 = 9999;//guest
+	@ResponseBody
+	public String 게시물을등록하다(@RequestBody Board 새게시물, HttpSession session) {
+		int 로그인한회원의번호 = 0;
 		if(session!=null && session.getAttribute("회원번호")!=null) {
 			로그인한회원의번호=(int)session.getAttribute("회원번호");
 			//로그인한 회원이 작성자이므로 새게시물에 작성자를 set 해주어야함
-		} 
+		} else {
+			return "reqLogin";
+		}
 		Member 작성한회원=new Member();
 		작성한회원.setNo(로그인한회원의번호);
 		새게시물.setWriter(작성한회원);
+		
 		게시물업무자.게시물을등록하다(새게시물);
 		
-		return "redirect:/main#board";
+		return "success";
 	}
 	//게시물목록출력 (비동기 요청)
 	@PostMapping("/boards")
@@ -52,9 +55,6 @@ public class 게시물컨트롤러 {
 		//           2                  6               10
 		//           3                  11              15 
 		int 시작게시물일련번호= 범위끝게시물일련번호-(페이지당게시물수-1);
-		System.out.println("페이지번호 = " + 페이지번호);
-		System.out.println("범위끝게시물일련번호::: = " + 범위끝게시물일련번호);
-		System.out.println("시작게시물일련번호 = " + 시작게시물일련번호);
 
 		Object[] 수집된게시물들과게시물수 = 게시물업무자.게시물목록을수집하다(시작게시물일련번호, 페이지당게시물수);
 

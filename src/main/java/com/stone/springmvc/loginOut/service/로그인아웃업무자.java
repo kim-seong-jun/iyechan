@@ -25,7 +25,6 @@ public class 로그인아웃업무자 implements I로그인아웃업무자 {
 	
 	@Override
 	public Member  로그인조회하다(String id, String  password) {
-		System.out.println("로그인아웃업무자-로그인조회하다 id = " + id);
 		return 회원DAO.찾다ID와PASSWORD(id, password);
 	}
 }

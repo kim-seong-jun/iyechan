@@ -38,11 +38,11 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `db10`.`board` (
   `no` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(45) NULL,
-  `contents` VARCHAR(1000) NULL,
+  `contents` LONGBLOB NULL,
   `writer` INT NOT NULL,
   `regdate` DATETIME NOT NULL,
   `chgdate` DATETIME NULL,
-  `views` INT NOT NULL DEFAULT 0,
+  `views` INT NULL DEFAULT 0,
   PRIMARY KEY (`no`),
   INDEX `fk_board_member_idx` (`writer` ASC) VISIBLE,
   CONSTRAINT `fk_board_member`
@@ -103,7 +103,6 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 show tables;
 
 insert into member(id,password,name,tel) values('admin','admin','admin','010-2222-3333');
-insert into member(no,id,password,name,tel) values(9999,'guest','guest','guest','');
 insert into member(id,password,name,tel) values('id1','p1','김국진','010-2222-3333');
 insert into member(id,password,name,tel) values('id2','p2','김구라','010-2222-3333');
 insert into member(id,password,name,tel) values('id3','p3','안영미','010-2222-3333');

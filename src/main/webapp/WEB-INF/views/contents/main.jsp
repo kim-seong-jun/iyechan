@@ -19,6 +19,20 @@
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>	
   <link href="/css/style_main.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="/js/main.js"></script>
+  <!-- include summernote css/js-->
+  <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
+  <link href="/css/style_write.css" rel="stylesheet" type="text/css" />
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+  <script>
+  $(document).ready(function() {
+	    $('#summernote').summernote({
+	            height: 300,                 // set editor height
+	            minHeight: null,             // set minimum height of editor
+	            maxHeight: null,             // set maximum height of editor
+	            focus: true                  // set focus to editable area after initializing summernote
+	    });
+	});
+  </script>
 </head>
 <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50">
 
@@ -48,7 +62,7 @@
             <li><a href="#infoModal" id="myinfo" data-toggle="modal">MY INFO</a></li>
             <li><a href="#ordersModal" id="orders" data-toggle="modal">ORDERS</a></li>
             <%}else{ %>
-          	<li><a href="/login">LOGIN</a></li>
+          	<li><a href="#loginModal"  id="login" data-toggle="modal">LOGIN</a></li>
           	<%} %>
           </ul>
         </li>
@@ -89,6 +103,8 @@
       <span class="sr-only">Next</span>
     </a>
 </div>
+
+
 
 <!-- Container (The brand Section) -->
 <div id="brand" class="container text-center">
@@ -178,87 +194,27 @@
     </div>
     <%} %>
   </div>
-  
-  <!-- Modal 주문서작성-->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">×</button>
-          <h4><span class="glyphicon glyphicon-file"></span> 주문서 작성</h4>
-        </div>
-        <div class="modal-body">
-          <form role="form" action="/order" method="post">
-            <div class="form-group">
-              <label for="name"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;&nbsp;아이이름</label>
-              <input type="text" class="form-control" id="name" name="name" placeholder="ex)김성준">
-            </div>
-            <div class="form-group">
-              <label for="isAllergie"><span class="glyphicon glyphicon-ban-circle"></span>&nbsp;&nbsp;&nbsp;알러지유무/종류</label>&nbsp;&nbsp;&nbsp;
-				<label class="radio-inline">
-					<input type="radio" id="isAllergieT" name="isAllergie" value="true" onchange="setDisplay()">있음
-				</label>
-				<label class="radio-inline">
-					<input type="radio" id="isAllergieF" name="isAllergie" value="false" onchange="setDisplay()" checked>없음
-				</label>
-              <input type="text" class="form-control" id="allergieName" name="allergieName" placeholder="ex)견과류" >
-            </div>
-            <div class="form-group">
-              <label for="post"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;&nbsp;배송지</label><br>
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control-inline" id="post" name="post" readonly>
-              <button type="button" onclick="findPost()" class="btn-primary btn-xs">주소검색</button>
-            </div>
-			<div class="form-group">              
-              <input type="text" class="form-control" id="address" name="address" readonly >
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" id="detailAddress" name="detailAddress" placeholder="상세주소를 입력해주세요." >
-            </div>
-            
-            <div class="form-group">
-              <label for="password"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;&nbsp;공동현관 비밀번호</label>
-              <input type="text" class="form-control" id="password" name="password" placeholder="ex)1001 누르고  1234#">
-            </div>
-            <div class="form-group">
-              <label for="bankInfo"><span class="glyphicon glyphicon-euro"></span>&nbsp;&nbsp;&nbsp;입금정보(입금일/입금주/입금금액)</label>
-              <input type="text" class="form-control" id="bankInfo" name="bankInfo" placeholder="ex)2/6일  김성준 150000">
-            </div>
-            <div class="form-group">
-              <label for="receiveType"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;&nbsp;&nbsp;수령방법</label>
-              <input type="text" class="form-control" id="receiveType" name="receiveType" placeholder="ex)직배송">
-            </div>
-            <div class="form-group">
-              <label for="infoPath"><span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;&nbsp;아이예찬을 알게된곳?</label>
-              <input type="text" class="form-control" id="infoPath" name="infoPath" placeholder="ex)민락신도시카페">
-            </div>
-              <button type="submit" class="btn btn-block">주문 
-                <span class="glyphicon glyphicon-ok"></span>
-              </button>
-          </form>
-        </div>
-        <div class="modal-footer">
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- Container (The board Section) -->
 <div id="board" class="container">
   <h3 class="text-center">BOARD</h3>
-  <p>의견 게시판</p>  
+  <!-- 페이지 목록 갯수   -->
+  <div class="row" >
+	<select id="listSize" class="col-xs-2 pull-right">
+		<option value="10">10 개씩</option>
+		<option value="15">15 개씩</option>
+		<option value="20">20 개씩</option>
+	</select>
+  </div>  
   <table class="table table-hover">
     <thead>
       <tr>
-	      <th>No</th>
-	      <th>제목</th>
-	      <th>작성일</th>
-	      <th>작성자</th>
-	      <th>조회수</th>
+	      <th class="col-sm-1">No</th>
+	      <th class="col-sm-5">제목</th>
+	      <th class="col-sm-2">작성자</th>
+	      <th class="col-sm-2">작성일</th>
+	      <th class="col-sm-2">조회수</th>
       </tr>
     </thead>
     
@@ -267,7 +223,7 @@
 	
   </table>
 	
-	<!-- pagination{s} -->
+  <!-- pagination{s} -->
   <div class="text-center">	
 	<div class="pagination">
 		<ul id="pageNo" class="pagination">
@@ -275,162 +231,68 @@
 		</ul>
 	</div>
   </div>
-	<!-- pagination{e} -->	
-  
-	<!-- search{s} -->
-<!-- 	<div class="form-group row justify-content-center">
+  <!-- pagination{e} -->	
 
-		<div class="w100" style="padding-right: 10px">
-			<select class="form-control form-control-sm" id="keywordType">
-				<option value="testTitle">제목</option>
-				<option value="testContent">본문</option>
-				<option value="testName">작성자</option>
-			</select>
-		</div>
-
-		<div class="w300" style="padding-right: 10px">
-			<input type="text" class="form-control form-control-sm"
-				name="keyword" id="keyword">
-		</div>
-
-		<div>
-			<button class="btn btn-sm btn-primary" name="btnSearch"
-				id="btnSearch">검색</button>
-		</div>
-	</div> -->
-	<!-- search{e} -->
-	
-		<!-- 페이지 목록 갯수   -->
-		<div class="form-group row justify-content-center" style="display:none">
-			<p>게시판 목록 갯수</p>
-			<div class="w100" style="padding-right: 10px">
-				<select id="listSize" class="form-control form-control-sm">
-					<option value="10">10 개</option>
-					<option value="15">15 개</option>
-					<option value="20">20 개</option>
-				</select>
-			</div>
-		</div>
+    <%if(isLogin){ %>
+    <div class="row">
+	  <div class="col-sm-12">
+	          <button class="btn pull-right" data-toggle="modal" data-target="#boardModal">글쓰기</button>
+	  </div>
+    </div>
+    <%} %>
   
 </div>  
 
 <!-- Container (Contact Section) -->
-<div id="contact" class="container">
-  <h3 class="text-center">CONTACT</h3>
-  <p class="text-center"><em>게시판에 문의사항이나 의견을 남겨주세요.</em></p>
-  <div class="row">
-    <div class="col-md-4">
-      <h3>연락처</h3>
-      <p><span class="glyphicon glyphicon-map-marker"></span>&nbsp;경기도 고양시 권율대로 671 아이예찬</p>
-      <p><span class="glyphicon glyphicon-phone"></span>&nbsp;Phone: +00 1515151515</p>
-      <p><span class="glyphicon glyphicon-envelope"></span>&nbsp;Email: mail@mail.com</p>
-    </div>
-    
-    <div class="col-md-8">
-    	<form action="/board" method="post">
-	      <div class="row">
-	        <div class="col-sm-6 form-group">
-	          <input class="form-control" id="title" name="title" placeholder="제목" type="text" required>
-	        </div>
-	      </div>
-	      <textarea class="form-control" id="contents" name="contents" placeholder="내용" rows="5"></textarea>
-	      <br>
-	      <div class="row">
-	        <div class="col-md-12 form-group">
-	          <button class="btn pull-right" type="submit">등록</button>
-	        </div>
-	      </div>
-        </form>
-    </div>
-  </div>		
-    
-
-<!-- Container (Friends Section) -->  
-  <h3 class="text-center">FRIENDS</h3>  
-  <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#home">아이예찬</a></li>
-    <li><a data-toggle="tab" href="#menu1">아기밥그릇 본점</a></li>
-    <li><a data-toggle="tab" href="#menu2">아기밥 그릇 김포/계양</a></li>
-    <li><a data-toggle="tab" href="#menu3">아기밥그릇 양천/마포</a></li>
-  </ul>
-
-  <div class="tab-content">
-    <div id="home" class="tab-pane fade in active">
-      <p><a href="https://cafe.naver.com/iyechan" target='_blank'>의정부 아기반찬 '아이예찬'</a></p>
-    </div>
-    <div id="menu1" class="tab-pane fade in active">
-      <p><a href="https://cafe.naver.com/babybowl" target='_blank'>행복한 윤서맘의 맛있는 아기반찬. 강서본점</a></p>
-    </div>
-    <div id="menu2" class="tab-pane fade">
-      <p><a href="https://cafe.naver.com/babybowlgimpo" target='_blank'>행복한 준우서우맘의 맛있는 아기반찬</a></p>
-    </div>
-    <div id="menu3" class="tab-pane fade">
-      <p><a href="https://cafe.naver.com/babybowlyc" target='_blank'>아이를 생각하는 엄마의 마음으로 만드는 아기반찬</a></p>
-    </div>
-  </div>
-</div>
-
-<!-- Modal - myInfo -->
-<div class="container">
-  <div class="modal fade" id="infoModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">×</button>
-          <h4><span class="glyphicon glyphicon-info-sign"></span>내정보</h4>
-        </div>
-        <div class="modal-body" id="myinfoData">
-
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-danger btn-default pull-right" data-dismiss="modal">
-            <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;&nbsp;&nbsp;확인
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal - orders -->
-<div class="container">
-  <div class="modal fade" id="ordersModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">×</button>
-          <h4><span class="glyphicon glyphicon-file"></span>주문내역</h4>
-        </div>
-        <div class="modal-body">        
-          <table class="table table-hover">
-		    <thead>
-		      <tr>
-			      <th>주문번호</th>
-			      <th>회원이름</th>
-			      <th>아이이름</th>
-			      <th>주문일자</th>
-			      <th>상태</th>
-			      <th></th>
-		      </tr>
-		    </thead>
-    
-			<!-- 주문내역이 출력될 영역 -->
-			<tbody id="ordersData"></tbody>
+<div id="contact" class="bg-2">
+  <div class="container">
+	  <h3 class="text-center">CONTACT</h3>
+	<!--   <p class="text-center"><em>게시판에 문의사항이나 의견을 남겨주세요.</em></p> -->
+	  
+	  <div class="row">
+	    <div class="col-md-4">
+	      <h3>연락처</h3>
+	      <p><span class="glyphicon glyphicon-map-marker"></span>&nbsp;경기도 고양시 권율대로 671 아이예찬</p>
+	      <p><span class="glyphicon glyphicon-phone"></span>&nbsp;Phone: +00 1515151515</p>
+	      <p><span class="glyphicon glyphicon-envelope"></span>&nbsp;Email: mail@mail.com</p>
+	    </div>
+	    <div class="col-md-8">	
+			<div id="daumRoughmapContainer1645752477223" class="root_daum_roughmap root_daum_roughmap_landing"  style='width:100%'></div>
+			<script charset="UTF-8" class="daum_roughmap_loader_script" src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
+			<script charset="UTF-8">
+				new daum.roughmap.Lander({
+					"timestamp" : "1645752477223",
+					"key" : "29azb",
+					"mapHeight" : "180"
+				}).render();
+			</script>
+		</div>
+	   </div>		
 	
-		 </table>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-danger btn-default pull-right" data-dismiss="modal">
-            <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;&nbsp;&nbsp;확인
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+	<!-- Container (Friends Section) -->  
+	  <br><br><h3 class="text-center">FRIENDS</h3>  
+	  <ul class="nav nav-tabs">
+	    <li class="active"><a data-toggle="tab" href="#home">아이예찬</a></li>
+	    <li><a data-toggle="tab" href="#menu1">아기밥그릇 본점</a></li>
+	    <li><a data-toggle="tab" href="#menu2">아기밥 그릇 김포/계양</a></li>
+	    <li><a data-toggle="tab" href="#menu3">아기밥그릇 양천/마포</a></li>
+	  </ul>
+	
+	  <div class="tab-content">
+	    <div id="home" class="tab-pane fade in active">
+	      <p><a href="https://cafe.naver.com/iyechan" target='_blank'>의정부 아기반찬 '아이예찬'</a></p>
+	    </div>
+	    <div id="menu1" class="tab-pane fade in active">
+	      <p><a href="https://cafe.naver.com/babybowl" target='_blank'>행복한 윤서맘의 맛있는 아기반찬. 강서본점</a></p>
+	    </div>
+	    <div id="menu2" class="tab-pane fade">
+	      <p><a href="https://cafe.naver.com/babybowlgimpo" target='_blank'>행복한 준우서우맘의 맛있는 아기반찬</a></p>
+	    </div>
+	    <div id="menu3" class="tab-pane fade">
+	      <p><a href="https://cafe.naver.com/babybowlyc" target='_blank'>아이를 생각하는 엄마의 마음으로 만드는 아기반찬</a></p>
+	    </div>
+	  </div>
+	</div>
 </div>
 
 <!-- Footer -->
@@ -440,6 +302,197 @@
   </a><br><br>
   <p>고객센터 전화번호    080-456-7890<br>경기도 고양시 권율대로 671 아이예찬   대표이사 김성준</p> 
 </footer>
+
+
+<!-- Modal start-->
+
+	<!-- Modal 게시물작성-->
+	<div class="container">  
+	  <div class="modal fade" id="boardModal" role="dialog">
+	    <div class="modal-dialog">
+	    
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">×</button>
+	          <h4><span class="glyphicon glyphicon-file"></span>게시물 작성</h4>
+	        </div>
+	        <div class="modal-body">
+	        	<label for="id">제목</label>
+	            <input type="text" class="form-control" id="title" name="title">
+				<textarea name="contents" id="summernote"></textarea>	        
+			</div>
+			<div class="modal-footer">              
+              <button onclick="insertBoard()" type="button" id="board-btn" class="btn btn-block">등록 
+                <span class="glyphicon glyphicon-ok"></span>
+              </button>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+
+	<!-- Modal - 주문서작성 -->
+	<div class="container">
+	  <div class="modal fade" id="myModal" role="dialog">
+	    <div class="modal-dialog">
+	    
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">×</button>
+	          <h4><span class="glyphicon glyphicon-file"></span> 주문서 작성</h4>
+	        </div>
+	        <div class="modal-body">
+	            <div class="row">
+	              <label for="name"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;&nbsp;아이이름</label>
+	              <input type="text" class="form-control" id="name" name="name" placeholder="ex)김성준">
+	            </div>
+	            <div class="row">
+	              	<label for="isAllergie"><span class="glyphicon glyphicon-ban-circle"></span>&nbsp;&nbsp;&nbsp;알러지유무/종류</label>&nbsp;&nbsp;&nbsp;
+					<label class="radio-inline">
+						<input type="radio" id="isAllergieT" name="isAllergie" value="true" onchange="setDisplay()">있음
+					</label>
+					<label class="radio-inline">
+						<input type="radio" id="isAllergieF" name="isAllergie" value="false" onchange="setDisplay()" checked>없음
+					</label>
+	              <input type="text" class="form-control" id="allergieName" name="allergieName" placeholder="ex)견과류" >
+	            </div>
+	            <div class="row">
+	              <label for="post"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;&nbsp;배송지</label><br>
+	            </div>
+	            <div class="row">
+	              <input type="text" class="form-control-inline" id="post" name="post" readonly>
+	              <button type="button" onclick="findPost()" class="btn-primary btn-xs">주소검색</button>
+	            </div>
+				<div class="row">              
+	              <input type="text" class="form-control" id="address" name="address" readonly >
+	            </div>
+	            <div class="row">
+	              <input type="text" class="form-control" id="detailAddress" name="detailAddress" placeholder="상세주소를 입력해주세요." >
+	            </div>
+	            <div class="row">
+	              <label for="password"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;&nbsp;공동현관 비밀번호</label>
+	              <input type="text" class="form-control" id="pw" name="password" placeholder="ex)1001 누르고  1234#">
+	            </div>
+	            <div class="row">
+	              <label for="bankInfo"><span class="glyphicon glyphicon-euro"></span>&nbsp;&nbsp;&nbsp;입금정보(입금일/입금주/입금금액)</label>
+	              <input type="text" class="form-control" id="bankInfo" name="bankInfo" placeholder="ex)2/6일  김성준 150000">
+	            </div>
+	            <div class="row">
+	              <label for="receiveType"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;&nbsp;&nbsp;수령방법</label>
+	              <input type="text" class="form-control" id="receiveType" name="receiveType" placeholder="ex)직배송">
+	            </div>
+	            <div class="row">
+	              <label for="infoPath"><span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;&nbsp;아이예찬을 알게된곳?</label>
+	              <input type="text" class="form-control" id="infoPath" name="infoPath" placeholder="ex)민락신도시카페">
+	            </div>
+	        </div>
+	        <div class="modal-footer">
+	        	<button type="button" id="order-btn" class="btn btn-block">주문 
+                <span class="glyphicon glyphicon-ok"></span>
+              	</button>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<!-- Modal - 내정보 보기 -->
+	<div class="container">
+	  <div class="modal fade" id="infoModal" role="dialog">
+	    <div class="modal-dialog">
+	    
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">×</button>
+	          <h4><span class="glyphicon glyphicon-info-sign"></span>내정보</h4>
+	        </div>
+	        <div class="modal-body" id="myinfoData">
+	
+	        </div>
+	        <div class="modal-footer">
+	          <button type="submit" class="btn btn-danger btn-default pull-right" data-dismiss="modal">
+	            <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;&nbsp;&nbsp;확인
+	          </button>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<!-- Modal 주문목록조회-->  
+	<div class="container">
+	  <div class="modal fade" id="ordersModal" role="dialog">
+	    <div class="modal-dialog">
+	    
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">×</button>
+	          <h4><span class="glyphicon glyphicon-file"></span>주문내역</h4>
+	        </div>
+	        <div class="modal-body">        
+	          <table class="table table-hover">
+			    <thead>
+			      <tr>
+				      <th>주문번호</th>
+				      <th>회원이름</th>
+				      <th>아이이름</th>
+				      <th>주문일자</th>
+				      <th>상태</th>
+				      <th></th>
+			      </tr>
+			    </thead>
+	    
+				<!-- 주문내역이 출력될 영역 -->
+				<tbody id="ordersData"></tbody>
+		
+			 </table>
+	        </div>
+	        <div class="modal-footer">
+	          <button type="submit" class="btn btn-danger btn-default pull-right" data-dismiss="modal">
+	            <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;&nbsp;&nbsp;확인
+	          </button>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<!-- Modal 로그인-->
+	<div class="container">  
+	  <div class="modal fade" id="loginModal" role="dialog">
+	    <div class="modal-dialog">
+	    
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">×</button>
+	          <h4><span class="glyphicon glyphicon-file"></span> 로그인</h4>
+	        </div>
+	        <div class="modal-body">
+	              <label for="id">ID</label>
+	              <input type="text" class="form-control" id="id" name="id">
+	              <label for="password">PASSWORD</label>
+	              <input type="password" class="form-control" id="password" name="password">
+	        </div>
+			<div class="modal-footer">              
+	              <button type="button" class="btn btn-block">회원등록 
+	                <span class="glyphicon glyphicon-ok"></span>
+	              </button>
+	              <button type="button" id="login-btn" class="btn btn-block">로그인 
+	                <span class="glyphicon glyphicon-ok"></span>
+	              </button>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+<!-- Modal end-->
 
 </body>
 </html>

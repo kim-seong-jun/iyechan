@@ -1,61 +1,85 @@
-//게시판 목록 요청
-function getBoardData(page) {
-// 	var search = $("#searchInput").val();
-	let listSize = $("#listSize").val();
-	let pageInfo={page:page, listSize:listSize}
-	$
-			.ajax({
-				url :"/boards", 				//서비스 주소
-				type:"POST",
-				contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
-				data : JSON.stringify(pageInfo),
-				dataType:"json",
-				success : function(res) {
-					const resData = res;
-					
-					let boards = resData.boardList;
-					let 현제페이지번호 = resData.pageNo;
-					let 마지막페이지번호 = resData.lastPageNo;
-					let 블럭당최대페이지수=listSize;
-					let 블럭시작페이지번호=현제페이지번호-(현제페이지번호-1)%블럭당최대페이지수;
-					let 예상블럭끝페이지번호=블럭시작페이지번호+(블럭당최대페이지수-1);
-					let 블럭끝페이지번호=(예상블럭끝페이지번호<=마지막페이지번호)?예상블럭끝페이지번호:마지막페이지번호;
-					
-					var data = "";
-					var block = "";
- 
-					//테이블의 row를 삽입
-					for (var i = 0; i < boards.length; i++) {
-						data += "<tr>"; 
-						data += "<td>" + (i+1) + "</td>";
-						data += "<td>" + boards[i].title + "</td>";
-						const d = new Date(boards[i].regdate);
- 						data += "<td>" + d.toLocaleDateString() + "</td>";
-						data += "<td>" + boards[i].writer.name + "</td>";
-						data += "<td>" + boards[i].views + "</td>";
-						data += "</tr>";
-					}
-					//페이지 표시					
-					if(블럭시작페이지번호 > 1){
-						block += "<li><a href='javascript:getBoardData(" + 블럭시작페이지번호-1+ ")'>◀ </a></li>"			
-					}
-					for(var 페이지번호=블럭시작페이지번호; 페이지번호<=블럭끝페이지번호; 페이지번호++){ 
-						var 출력페이지번호=(페이지번호==현제페이지번호)?"["+페이지번호+"]":" "+페이지번호;
-						block += "<li><a href='javascript:getBoardData("+ 페이지번호 + ")'>" + 출력페이지번호 + "</a></li>"
-					}
-					if(블럭끝페이지번호 < 마지막페이지번호){	
-						block += "<li><a href='javascript:getBoardData(" + 블럭끝페이지번호+1 + ")'> ▶ </a></li>"		
-					}	
-
-					$("#boardData").html(data);
-					$("#pageNo").html(block);
-				}
-			})
-}
-
 $(document).ready(function(){ 
   
-  getBoardData();	
+	//board- selectAll
+	getBoardData();	
+	
+	//로그인 요청
+	$("#login-btn").click(function(){
+		$.ajax({
+			url :"/login",
+			type:"POST",
+			data: { "id" : $('#id').val(), 
+				"password" : $('#password').val() },
+			success : function(res) {
+				if(res==='success')	{
+					alert('로그인 했습니다.')
+					location.reload();	
+				}else{
+					alert('로그인 정보가 올바르지 않습니다.');	
+				}}
+		})
+	})		
+	
+	//내정보 요청
+	$("#myinfo").click(function(){
+		$.ajax({
+			url :"/member",
+			type:"POST",
+			contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
+			dataType:"json",
+			success : function(res) {
+				const member = res;
+	
+				var data = "";
+				data += "<tr>" + member.id + "</tr>";;
+				data += "<tr>" + member.name + "</tr>";;
+				data += "<tr>" + member.name + "</tr>";;
+				data += "<tr>" + member.tel + "</tr>";;
+				data += "<tr>" + member.email + "</tr>";;
+				data += "<tr>" + member.post + "</tr>";;
+				data += "<tr>" + member.address + "</tr>";;
+				data += "<tr>" + member.detailAddress + "</tr>";;
+				
+				$("#myinfoData").html(data);
+			}
+		})
+	})
+
+	//주문목록 데이터 조회 요청
+	$("#orders").click(function(){
+		$.ajax({
+			url :"/orders",
+			type:"POST",
+			contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
+			dataType:"json",
+			success : function(res) {
+				const orderList = res;
+			
+				var data = "";
+				// 테이블의 row를 삽입하는 부분
+				for (var i = 0; i < orderList.length; i++) {
+					data += "<tr>"; 
+					data += "<td>" + orderList[i].orderNo + "</td>";
+					data += "<td>" + orderList[i].member.name + "</td>";
+					data += "<td>" + orderList[i].name + "</td>";
+					const d = new Date(orderList[i].regDate);
+					data += "<td>" + d.toLocaleDateString() + "</td>";
+					data += "<td>" + getStatus(orderList[i].status) + "</td>";
+					data += "<td><a href=''#' class='btn-primary btn-xs'>수정</a>&nbsp"
+					data += "<a href='/deleteOrder/" + orderList[i].orderNo + "' class='btn-primary btn-xs'>삭제</a></td>"
+					data += "</tr>";
+				}
+				
+				$("#ordersData").html(data);
+			}
+		})
+	
+	})
+	
+	
+$("#listSize").change(function() {
+	getBoardData();
+});
 	
   //알러지 상세 - 숨기기를 기본값
   $('#allergieName').hide();
@@ -86,7 +110,95 @@ $(document).ready(function(){
       });
     } // End if
   });
+}) //End $(document).ready(function()
+
+
+function insertBoard() {
+	let title = $("#title").val();
+	let contents = $("#summernote").val();
+	let boardInfo={title:title, contents:contents};
+	$.ajax({
+		url :"/board",
+		type:"POST",
+		contentType:"application/json",	
+		data : JSON.stringify(boardInfo),
+		success : function(res) {
+			if(res==='success')	{
+				alert('게시물을 등록하였습니다.')
+				location.reload();		
+			}else if(res==='reqLogin'){
+				alert('로그인후 작성해 주세요.');	
+			}
+			else{
+				alert('게시물등록에 실패하였습니다.');	
+			}}
+	})	
+}	
+
+
+//게시판 목록 요청
+function getBoardData(page) {
+// 	var search = $("#searchInput").val();
+	let listSize = $("#listSize").val();
+	let pageInfo={page:page, listSize:listSize}
+	$.ajax({
+		url :"/boards", 				//서비스 주소
+		type:"POST",
+		contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
+		data : JSON.stringify(pageInfo),
+		dataType:"json",
+		success : function(res) {
+		const resData = res;
+					
+		let boards = resData.boardList;
+		let 현제페이지번호 = resData.pageNo;
+		let 마지막페이지번호 = resData.lastPageNo;
+		let 블럭당최대페이지수=listSize;
+		let 블럭시작페이지번호=현제페이지번호-(현제페이지번호-1)%블럭당최대페이지수;
+		let 예상블럭끝페이지번호=블럭시작페이지번호+(블럭당최대페이지수-1);
+		let 블럭끝페이지번호=(예상블럭끝페이지번호<=마지막페이지번호)?예상블럭끝페이지번호:마지막페이지번호;
+					
+		var data = "";
+		var block = "";
+ 
+		//테이블의 row를 삽입
+		for (var i = 0; i < boards.length; i++) {
+			data += "<tr>"; 
+			data += "<td>" + (i+1) + "</td>";
+			data += "<td><a href='/board/" + boards[i].no + "'>"+ boards[i].title + "</a></td>";
+			data += "<td>" + boards[i].writer.name + "</td>";
+			const d = new Date(boards[i].regdate);
+			data += "<td>" + d.toLocaleDateString() + "</td>";
+			data += "<td>" + boards[i].views + "</td>";
+			data += "</tr>";
+		}
+		//페이지 표시					
+		if(블럭시작페이지번호 > 1){
+			block += "<li><a href='javascript:getBoardData(" + 블럭시작페이지번호-1+ ")'>◀ </a></li>"			
+		}
+		for(var 페이지번호=블럭시작페이지번호; 페이지번호<=블럭끝페이지번호; 페이지번호++){ 
+			var 출력페이지번호=(페이지번호==현제페이지번호)?"["+페이지번호+"]":" "+페이지번호;
+			block += "<li><a href='javascript:getBoardData("+ 페이지번호 + ")'>" + 출력페이지번호 + "</a></li>"
+		}
+		if(블럭끝페이지번호 < 마지막페이지번호){	
+			block += "<li><a href='javascript:getBoardData(" + 블럭끝페이지번호+1 + ")'> ▶ </a></li>"		
+		}	
+
+		$("#boardData").html(data);
+		$("#pageNo").html(block);
+	}
 })
+}
+
+function updateBoard() {
+	alert('업데이트');
+}
+function updateBoard() {
+	alert('업데이트');
+}
+function deleteBoard() {
+	alert('삭제');
+}
 
 //알레르기 유무에 따라 상세내용입력란 보여주기
 function setDisplay(){
@@ -110,37 +222,6 @@ function findPost(){
 }
 
 
-//주문목록 데이터 조회 요청
-$("#orders").click(function(){
-	$.ajax({
-		url :"/orders",
-		type:"POST",
-		contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
-		dataType:"json",
-		success : function(res) {
-			const orderList = res;
-		
-			var data = "";
-			// 테이블의 row를 삽입하는 부분
-			for (var i = 0; i < orderList.length; i++) {
-				data += "<tr>"; 
-				data += "<td>" + orderList[i].orderNo + "</td>";
-				data += "<td>" + orderList[i].member.name + "</td>";
-				data += "<td>" + orderList[i].name + "</td>";
-				const d = new Date(orderList[i].regDate);
-				data += "<td>" + d.toLocaleDateString() + "</td>";
-				data += "<td>" + getStatus(orderList[i].status) + "</td>";
-				data += "<td><a href=''#' class='btn-primary btn-xs'>수정</a>&nbsp"
-				data += "<a href='/deleteOrder/" + orderList[i].orderNo + "' class='btn-primary btn-xs'>삭제</a></td>"
-				data += "</tr>";
-			}
-			
-			$("#ordersData").html(data);
-		}
-	})
-
-})
-
 function getStatus(status) {
 	switch (status) {
 	  case 0: return "임시저장";
@@ -155,27 +236,8 @@ function getStatus(status) {
 }
 
 
-//내정보 요청
-$("#myinfo").click(function(){
-	$.ajax({
-		url :"/member",
-		type:"POST",
-		contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
-		dataType:"json",
-		success : function(res) {
-			const member = res;
 
-			var data = "";
-			data += "<tr>" + member.id + "</tr>";;
-			data += "<tr>" + member.name + "</tr>";;
-			data += "<tr>" + member.name + "</tr>";;
-			data += "<tr>" + member.tel + "</tr>";;
-			data += "<tr>" + member.email + "</tr>";;
-			data += "<tr>" + member.post + "</tr>";;
-			data += "<tr>" + member.address + "</tr>";;
-			data += "<tr>" + member.detailAddress + "</tr>";;
-			
-			$("#myinfoData").html(data);
-		}
-	})
-})
+
+
+
+

@@ -36,7 +36,6 @@ public class 주문컨트롤러 {
 	@ResponseBody 
 	public List<Orders> readOrders(HttpSession session) {
 		int loginMember = (int)session.getAttribute("회원번호");
-		System.out.println("loginMember= " + loginMember);
 		List<Orders> orderList = 주문업무자.selectOrderListService(loginMember);
 		return orderList; 
 	}
@@ -44,13 +43,11 @@ public class 주문컨트롤러 {
 	//주문서 변경준비
 	@GetMapping("/updateOrder/{주문서번호}")
 	public Orders 주문서변경준비하다(@PathVariable int 주문서번호){
-		System.out.println("@GetMapping");
 		Orders orders = 주문업무자.selectByNoService(주문서번호);
 		return orders;
 	}
 	@PostMapping("/updateOrder/{주문서번호}")
 	public Orders 주문서변경준비하다1(@PathVariable int 주문서번호){
-		System.out.println("@PostMapping");
 		Orders orders = 주문업무자.selectByNoService(주문서번호);
 		return orders;
 	}
