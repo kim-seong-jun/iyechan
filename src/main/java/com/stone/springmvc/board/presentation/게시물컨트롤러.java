@@ -27,7 +27,7 @@ public class 게시물컨트롤러 {
 	
 	//게시물등록(비동기요청)
 	@PostMapping("/board")
-	@ResponseBody
+	@ResponseBody 
 	public String 게시물을등록하다(@RequestBody Board 새게시물, HttpSession session) {
 		int 로그인한회원의번호 = 0;
 		if(session!=null && session.getAttribute("회원번호")!=null) {
@@ -71,57 +71,35 @@ public class 게시물컨트롤러 {
 	
 	//게시물상세정보
 	@GetMapping("/board/{게시물번호}")
-	public ModelAndView 게시물상세츨력하다(@PathVariable int 게시물번호,HttpSession session) {
+	@ResponseBody
+	public Board 게시물상세츨력하다(@PathVariable int 게시물번호,HttpSession session) {
 		Board 찾은게시물=게시물업무자.게시물을조회하다And조회수증가하다(게시물번호);
-		ModelAndView mv=new ModelAndView();
-		mv.setViewName("board/게시물상세창");
-		mv.addObject("board",찾은게시물);
-		//로그인 안되어 있으면=>  로그인회원와게시물작성자가동일인물인가=null
-		Boolean 로그인회원와게시물작성자가동일인물인가=null;
-	    if(session!=null) {
-	    	Integer 회원번호=(Integer)session.getAttribute("회원번호");
-	    	 if(회원번호!=null) { //로그인된 경우
-	    		 //로그인 회원와 게시물 작성자가 동일 인물
-	    		 if(회원번호==찾은게시물.getWriter().getNo()) {
-	    			 로그인회원와게시물작성자가동일인물인가=true;
-	    		 }
-	    		 else //로그인 회원와 게시물 작성자가 다른 인물
-	    		 {
-	    			 로그인회원와게시물작성자가동일인물인가=false;
-	    		 }
-	    	 }
-	    }
-	    
-		mv.addObject("isWriter", 로그인회원와게시물작성자가동일인물인가);
-		return mv;
-	}
-	//게시물변경준비
-	@GetMapping("/update/{게시물번호}")
-	ModelAndView 게시물변경준비하다(@PathVariable int 게시물번호){
-		Board 찾은게시물 = 게시물업무자.게시물변경준비하다(게시물번호);
-		
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("board/게시물변경창");
-		modelAndView.addObject("board", 찾은게시물);
-		return modelAndView;
+		/*
+		 * ModelAndView mv=new ModelAndView(); mv.setViewName("board/게시물상세창");
+		 * mv.addObject("board",찾은게시물); //로그인 안되어 있으면=> 로그인회원와게시물작성자가동일인물인가=null Boolean
+		 * 로그인회원와게시물작성자가동일인물인가=null; if(session!=null) { Integer
+		 * 회원번호=(Integer)session.getAttribute("회원번호"); if(회원번호!=null) { //로그인된 경우 //로그인
+		 * 회원와 게시물 작성자가 동일 인물 if(회원번호==찾은게시물.getWriter().getNo()) {
+		 * 로그인회원와게시물작성자가동일인물인가=true; } else //로그인 회원와 게시물 작성자가 다른 인물 {
+		 * 로그인회원와게시물작성자가동일인물인가=false; } } }
+		 * 
+		 * mv.addObject("isWriter", 로그인회원와게시물작성자가동일인물인가);
+		 */
+		return 찾은게시물;
 	}
 	//게시물변경
-	@PostMapping("/update")
-	ModelAndView 게시물을변경하다(Board board) {
+	@PostMapping("/updateBoard")
+	@ResponseBody 
+	public String 게시물을변경하다(@RequestBody Board board) {
 		게시물업무자.게시물을변경하다(board);
-		
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("board/게시물변경통보창");//command
-		return modelAndView;
+		return "success";
 	}
 	//게시물삭제
-	@GetMapping("/delete/{게시물번호}")
-	ModelAndView 게시물을삭제하다(@PathVariable int 게시물번호) {
+	@GetMapping("/deleteBoard/{게시물번호}")
+	@ResponseBody 
+	public String 게시물을삭제하다(@PathVariable int 게시물번호) {
 		게시물업무자.게시물을삭제하다(게시물번호);
-		
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("board/게시물삭제통보창");//command
-		return modelAndView;
+		return "success";
 	}
 	
 }

@@ -1,50 +1,29 @@
 $(document).ready(function(){ 
   
+	//Board --------------------------------------------------------------
+	
 	//board- selectAll
-	getBoardData();	
+	getBoardData();
 	
-	//로그인 요청
-	$("#login-btn").click(function(){
-		$.ajax({
-			url :"/login",
-			type:"POST",
-			data: { "id" : $('#id').val(), 
-				"password" : $('#password').val() },
-			success : function(res) {
-				if(res==='success')	{
-					alert('로그인 했습니다.')
-					location.reload();	
-				}else{
-					alert('로그인 정보가 올바르지 않습니다.');	
-				}}
-		})
-	})		
 	
-	//내정보 요청
-	$("#myinfo").click(function(){
-		$.ajax({
-			url :"/member",
-			type:"POST",
-			contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
-			dataType:"json",
-			success : function(res) {
-				const member = res;
 	
-				var data = "";
-				data += "<tr>" + member.id + "</tr>";;
-				data += "<tr>" + member.name + "</tr>";;
-				data += "<tr>" + member.name + "</tr>";;
-				data += "<tr>" + member.tel + "</tr>";;
-				data += "<tr>" + member.email + "</tr>";;
-				data += "<tr>" + member.post + "</tr>";;
-				data += "<tr>" + member.address + "</tr>";;
-				data += "<tr>" + member.detailAddress + "</tr>";;
-				
-				$("#myinfoData").html(data);
-			}
-		})
+	var action ='';
+	var url = '';
+	var type = '';
+	
+	//글쓰기 버튼 글릭시 text 초기화
+	$("#btn_bWrite").click(function(){
+		$("#bModal_title").text("게시물 등록");
+		$("#board_title").val('');
+		$("#summernote").val('');
+		var btnSec = "";
+		btnSec += "<button onclick='insertBoard()' type='button' id='board-btn' class='btn btn-block-inline'>" 
+		btnSec += "<span class='glyphicon glyphicon-ok'></span>&nbsp;&nbsp;등록"
+		btnSec += "</button>"
+		$("#boardBtnSec").html(btnSec);
 	})
 
+	//Orders --------------------------------------------------------------
 	//주문목록 데이터 조회 요청
 	$("#orders").click(function(){
 		$.ajax({
@@ -74,13 +53,83 @@ $(document).ready(function(){
 			}
 		})
 	
-	})
+	})	
 	
+	//내정보 요청
+	$("#myinfo").click(function(){
+		$.ajax({
+			url :"/member",
+			type:"POST",
+			contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
+			dataType:"json",
+			success : function(res) {
+				const member = res;
 	
-$("#listSize").change(function() {
-	getBoardData();
-});
+				var data = "";
+				data += "<tr>" + member.id + "</tr>";;
+				data += "<tr>" + member.name + "</tr>";;
+				data += "<tr>" + member.name + "</tr>";;
+				data += "<tr>" + member.tel + "</tr>";;
+				data += "<tr>" + member.email + "</tr>";;
+				data += "<tr>" + member.post + "</tr>";;
+				data += "<tr>" + member.address + "</tr>";;
+				data += "<tr>" + member.detailAddress + "</tr>";;
+				
+				$("#myinfoData").html(data);
+			}
+		})
+	})	
 	
+	//Member --------------------------------------------------------------
+	//내정보 요청
+	$("#myinfo").click(function(){
+		$.ajax({
+			url :"/member",
+			type:"POST",
+			contentType:"application/json",	//서버로 보내는 컨텐츠가 jason임을 표시
+			dataType:"json",
+			success : function(res) {
+				const member = res;
+	
+				var data = "";
+				data += "<tr>" + member.id + "</tr>";;
+				data += "<tr>" + member.name + "</tr>";;
+				data += "<tr>" + member.name + "</tr>";;
+				data += "<tr>" + member.tel + "</tr>";;
+				data += "<tr>" + member.email + "</tr>";;
+				data += "<tr>" + member.post + "</tr>";;
+				data += "<tr>" + member.address + "</tr>";;
+				data += "<tr>" + member.detailAddress + "</tr>";;
+				
+				$("#myinfoData").html(data);
+			}
+		})
+	})	
+	
+	//Login --------------------------------------------------------------
+	
+	//로그인 요청
+	$("#login-btn").click(function(){
+		$.ajax({
+			url :"/login",
+			type:"POST",
+			data: { "id" : $('#id').val(), 
+				"password" : $('#password').val() },
+			success : function(res) {
+				if(res==='success')	{
+					alert('로그인 했습니다.')
+					location.reload();	
+				}else{
+					alert('로그인 정보가 올바르지 않습니다.');	
+				}}
+		})
+	})		
+	
+   //게시판 개수 변경		
+	$("#listSize").change(function() {
+		getBoardData();
+	});
+		
   //알러지 상세 - 숨기기를 기본값
   $('#allergieName').hide();
   
@@ -114,7 +163,7 @@ $("#listSize").change(function() {
 
 
 function insertBoard() {
-	let title = $("#title").val();
+	let title = $("#board_title").val();
 	let contents = $("#summernote").val();
 	let boardInfo={title:title, contents:contents};
 	$.ajax({
@@ -125,7 +174,7 @@ function insertBoard() {
 		success : function(res) {
 			if(res==='success')	{
 				alert('게시물을 등록하였습니다.')
-				location.reload();		
+				location.reload();
 			}else if(res==='reqLogin'){
 				alert('로그인후 작성해 주세요.');	
 			}
@@ -133,8 +182,7 @@ function insertBoard() {
 				alert('게시물등록에 실패하였습니다.');	
 			}}
 	})	
-}	
-
+}
 
 //게시판 목록 요청
 function getBoardData(page) {
@@ -165,7 +213,8 @@ function getBoardData(page) {
 		for (var i = 0; i < boards.length; i++) {
 			data += "<tr>"; 
 			data += "<td>" + (i+1) + "</td>";
-			data += "<td><a href='/board/" + boards[i].no + "'>"+ boards[i].title + "</a></td>";
+			data += "<td><a href='javascript:detailBoard(" + boards[i].no + ")'>"+ boards[i].title + "</a></td>";
+			//data += "<td><a href='#' id='boardList_title'>"+ boards[i].title + "</a></td>";
 			data += "<td>" + boards[i].writer.name + "</td>";
 			const d = new Date(boards[i].regdate);
 			data += "<td>" + d.toLocaleDateString() + "</td>";
@@ -190,14 +239,69 @@ function getBoardData(page) {
 })
 }
 
-function updateBoard() {
-	alert('업데이트');
+//게시물 상세보기
+function detailBoard(no) {
+	$.ajax({
+		url :"/board/"+no,
+		type:"get",
+		data: { "no" : no},
+		dataType:"json",
+		success : function(res) {
+			let board = res;
+			$("#bModal_title").text("게시물 상세");
+			$("#board_title").val(board.title);
+			$("#summernote").val(board.contents);
+			$("#board_no").val(board.no);
+			
+			var btnSec = "";
+			btnSec += "<button onclick='updateBoard()' type='button' id='board-btn' class='btn btn-block-inline'>" 
+			btnSec += "<span class='glyphicon glyphicon-ok'></span>&nbsp;&nbsp;수정"
+			btnSec += "</button>"
+			btnSec += "<button onclick='deleteBoard("+ board.no +")' type='button' id='board-btn' class='btn btn-block-inline'>" 
+			btnSec += "<span class='glyphicon glyphicon-ok'></span>&nbsp;&nbsp;삭제"
+			btnSec += "</button>"
+			$("#boardBtnSec").html(btnSec);
+			
+			$("#boardModal").modal();
+		}
+	})
 }
+
+
 function updateBoard() {
-	alert('업데이트');
+	let no = $("#board_no").val();
+	let title = $("#board_title").val();
+	let contents = $("#summernote").val();
+	let boardInfo={no:no, title:title, contents:contents};
+	$.ajax({
+		url :"/updateBoard",
+		type:"POST",
+		contentType:"application/json",	
+		data : JSON.stringify(boardInfo),
+		success : function(res) {
+			if(res==='success')	{
+				alert('게시물을 수정했습니다.')
+				location.reload();
+			}else{
+				alert('게시물등록에 실패하였습니다.');	
+			}}
+	})	
 }
-function deleteBoard() {
-	alert('삭제');
+
+function deleteBoard(no) {
+	$.ajax({
+		url :"/deleteBoard/"+no,
+		type:"get",
+		data: { "no" : no},
+		success : function(res) {
+			if(res==='success') {
+				alert('삭제 하였습니다.');
+				location.reload();
+			} else {
+				alert('처리 실패 하였습니다.');
+			};
+		}
+	})
 }
 
 //알레르기 유무에 따라 상세내용입력란 보여주기
@@ -221,7 +325,6 @@ function findPost(){
     }).open();
 }
 
-
 function getStatus(status) {
 	switch (status) {
 	  case 0: return "임시저장";
@@ -234,9 +337,6 @@ function getStatus(status) {
 	    return "" 
 	}
 }
-
-
-
 
 
 

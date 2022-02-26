@@ -61,18 +61,18 @@
   }
   .btn {
     padding: 10px 20px;
-    background-color: #333;
+    background-color: #ffa244;
     color: #f1f1f1;
     border-radius: 0;
     transition: .2s;
   }
   .btn:hover, .btn:focus {
-    border: 1px solid #333;
+    border: 1px solid #ffa244;
     background-color: #fff;
     color: #000;
   }
   .modal-header, h4, .close {
-    background-color: #333;
+    background-color: #ffa244;
     color: #fff !important;
     text-align: center;
     font-size: 30px;
@@ -92,7 +92,7 @@
   .navbar {
     font-family: Montserrat, sans-serif;
     margin-bottom: 0;
-    background-color: #ffaaaa;
+    background-color:#ffaaaa;
     border: 0;
     font-size: 11px !important;
     letter-spacing: 4px;
