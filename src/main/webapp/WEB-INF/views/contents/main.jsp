@@ -17,13 +17,6 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
   <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
   
-<!--   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
- -->  
- 
- 
- 
   <!-- include summernote css/js-->
   <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
   <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>  
@@ -53,19 +46,19 @@
         <li><a href="#menu">MENU</a></li>
         <li><a href="#board">BOARD</a></li>
         <li><a href="#contact">CONTACT</a></li>
+          	<%if(isLogin){ %>
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#">MY MENU
           <span class="caret"></span></a>
           <ul class="dropdown-menu">
-          	<%if(isLogin){ %>
             <li><a href="/logOut">LOGOUT</a></li>
             <li><a href="#infoModal" id="myinfo" data-toggle="modal">MY INFO</a></li>
             <li><a href="#ordersModal" id="orders" data-toggle="modal">ORDERS</a></li>
-            <%}else{ %>
-          	<li><a href="#loginModal"  id="login" data-toggle="modal">LOGIN</a></li>
-          	<%} %>
           </ul>
         </li>
+            <%}else{ %>
+       	<li><a href="#loginModal"  id="login" data-toggle="modal">LOGIN</a></li>
+          	<%} %>
         <li><a href="#"><span class="glyphicon glyphicon-search"></span></a></li>
       </ul>
     </div>
@@ -189,7 +182,7 @@
     <%if(isLogin){ %>
     <div class="row">
 	  <div class="col-sm-12">
-	          <button class="btn pull-right" data-toggle="modal" data-target="#myModal">주문하기</button>
+	          <button class="btn pull-right" data-toggle="modal" data-target="#orderCModal">주문하기</button>
 	  </div>
     </div>
     <%} %>

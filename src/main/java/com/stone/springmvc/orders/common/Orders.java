@@ -18,7 +18,7 @@ public class Orders {
 	String receiveType;		//수령방법
 	String infoPath;		//알게된 경로
 	Date regDate;			//주문일자
-	int status;				//0.임시저장/1.주문저장/2.배송준비/3.배송중/3.배송완료/4.취소
+	int status;				//0.임시저장/1.주문저장/2.배송준비/3.배송중/4.배송완료/5.취소
 	
 	public int getOrderNo() {
 		return orderNo;

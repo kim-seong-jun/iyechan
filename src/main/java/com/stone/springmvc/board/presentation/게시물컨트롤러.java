@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.stone.springmvc.board.common.Board;
+import com.stone.springmvc.board.common.BoardDetail;
 import com.stone.springmvc.board.common.BoardList;
 import com.stone.springmvc.board.common.PageInfo;
 import com.stone.springmvc.board.service.I게시물업무자;
@@ -25,7 +25,7 @@ import com.stone.springmvc.member.common.Member;
 public class 게시물컨트롤러 { 
 	@Autowired I게시물업무자 게시물업무자;
 	
-	//게시물등록(비동기요청)
+	//게시물등록
 	@PostMapping("/board")
 	@ResponseBody 
 	public String 게시물을등록하다(@RequestBody Board 새게시물, HttpSession session) {
@@ -44,7 +44,7 @@ public class 게시물컨트롤러 {
 		
 		return "success";
 	}
-	//게시물목록출력 (비동기 요청)
+	//게시물목록출력
 	@PostMapping("/boards")
 	@ResponseBody 
 	public BoardList 게시물목록출력하다(@RequestBody PageInfo pageInfo) {
@@ -72,21 +72,30 @@ public class 게시물컨트롤러 {
 	//게시물상세정보
 	@GetMapping("/board/{게시물번호}")
 	@ResponseBody
-	public Board 게시물상세츨력하다(@PathVariable int 게시물번호,HttpSession session) {
+	public BoardDetail 게시물상세츨력하다(@PathVariable int 게시물번호,HttpSession session) {
 		Board 찾은게시물=게시물업무자.게시물을조회하다And조회수증가하다(게시물번호);
-		/*
-		 * ModelAndView mv=new ModelAndView(); mv.setViewName("board/게시물상세창");
-		 * mv.addObject("board",찾은게시물); //로그인 안되어 있으면=> 로그인회원와게시물작성자가동일인물인가=null Boolean
-		 * 로그인회원와게시물작성자가동일인물인가=null; if(session!=null) { Integer
-		 * 회원번호=(Integer)session.getAttribute("회원번호"); if(회원번호!=null) { //로그인된 경우 //로그인
-		 * 회원와 게시물 작성자가 동일 인물 if(회원번호==찾은게시물.getWriter().getNo()) {
-		 * 로그인회원와게시물작성자가동일인물인가=true; } else //로그인 회원와 게시물 작성자가 다른 인물 {
-		 * 로그인회원와게시물작성자가동일인물인가=false; } } }
-		 * 
-		 * mv.addObject("isWriter", 로그인회원와게시물작성자가동일인물인가);
-		 */
-		return 찾은게시물;
+		
+		Boolean isWriter=false; 
+		if(session!=null) { 
+			Integer 회원번호=(Integer)session.getAttribute("회원번호"); 
+			System.out.println("회원번호 = " +회원번호);
+			if(회원번호!=null) { 
+				//로그인된 경우 
+				//로그인 회원와 게시물 작성자가 동일 인물 
+				if(회원번호==찾은게시물.getWriter().getNo()) {
+					isWriter=true; 
+				} 
+			} 
+			System.out.println("isWriter = " +isWriter);
+		}
+		  
+		BoardDetail boardDetail = new BoardDetail();
+		boardDetail.setBoard(찾은게시물);
+		boardDetail.setWriter(isWriter);
+		
+		return boardDetail;
 	}
+	
 	//게시물변경
 	@PostMapping("/updateBoard")
 	@ResponseBody 

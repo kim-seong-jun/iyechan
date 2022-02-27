@@ -10,7 +10,16 @@
 	            height: 300,                 // set editor height
 	            minHeight: null,             // set minimum height of editor
 	            maxHeight: null,             // set maximum height of editor
-	            focus: true                  // set focus to editable area after initializing summernote
+	            lang: "ko-KR",
+	            toolbar: [
+	                ['style', ['style']],
+	                ['font', ['bold', 'underline', 'clear']],
+	                ['color', ['color']],
+	                ['para', ['ul', 'ol', 'paragraph']],
+	                ['table', ['table']],
+	                ['insert', ['link', 'picture']],
+	                ['view', ['codeview']]
+	              ]
 	    });
 	});
   </script>
@@ -47,9 +56,8 @@
 <!-- Order ------------------>
 	<!-- Modal - 주문서작성 -->
 	<div class="container">
-	  <div class="modal fade" id="myModal" role="dialog">
+	  <div class="modal fade" id="orderCModal" role="dialog">
 	    <div class="modal-dialog">
-	    
 	      <!-- Modal content-->
 	      <div class="modal-content">
 	        <div class="modal-header">
@@ -102,7 +110,7 @@
 	            </div>
 	        </div>
 	        <div class="modal-footer">
-	        	<button type="button" id="order-btn" class="btn btn-block">주문 
+	        	<button type="button" id="order-btn" class="btn btn-block-inline">주문 
                 <span class="glyphicon glyphicon-ok"></span>
               	</button>
 	        </div>
@@ -151,6 +159,75 @@
 	</div>
 
 <!-- Member ------------------>
+	<!-- Modal - 회원등록 -->
+	<div class="container">
+	  <div class="modal fade" id="memberModal" role="dialog">
+	    <div class="modal-dialog">
+	    
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">×</button>
+	          <h4><span class="glyphicon glyphicon-file"></span> 회원등록</h4>
+	        </div>
+	        <div class="modal-body">
+	            <div class="row">
+	              <label for="member_name"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;&nbsp;성명*</label>
+	              <input type="text" class="form-control" id="member_name" name="name">
+	            </div>
+	            <div class="row">
+	              <label for="post"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;&nbsp;주소</label><br>
+	            </div>
+	            <div class="row">
+	              <input type="text" class="form-control-inline" id="member_post" name="post" readonly>
+	              <button type="button" onclick="findPost_member()" class="btn-primary btn-xs">주소검색</button>
+	            </div>
+				<div class="row">              
+	              <input type="text" class="form-control" id="member_address" name="address" readonly >
+	            </div>
+	            <div class="row">
+	              <input type="text" class="form-control" id="member_detailAddress" name="detailAddress" placeholder="상세주소를 입력해주세요." >
+	            </div>
+	            <div class="row">
+	              <label for="member_id"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;&nbsp; 아이디*</label>
+	              <input type="text" class="form-control" id="member_id" name="id">
+	            </div>
+	            <div class="row">
+	              <label for="member_password"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;&nbsp; 비밀번호*</label>
+	              <input type="text" class="form-control" id="member_password" name="password">
+	            </div>
+	            <div class="row">
+	              <label for="member_password2"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;&nbsp; 비밀번호확인*</label>
+	              <input type="text" class="form-control" id="member_password2" name="password2">
+	            </div>
+	            <div class="row">
+	              <label for="member_tel"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;&nbsp; 전화번호*</label>
+	              <input type="text" class="form-control" id="member_tel" name="tel">
+	            </div>
+	            <div class="row">
+	              <label for="email1"><span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;&nbsp; E-mail</label>
+	              <input type="text" class="form-control-inline" id="member_email1">@
+				  <select id="member_email2" class="col-xs-2-inline">
+					<option value="naver.com">navar.com</option>
+				    <option value="daum.net">daum.net</option>
+				    <option value="gmail.com">gmail.com</option>
+				    <option value="직접">직접입력</option>
+				  </select>
+	            </div>
+               <div class="row" >
+	  		    <input type="hidden" class="form-control" id="member_email" name="email">
+ 			  </div>  
+	        </div>
+	        <div class="modal-footer">
+	        	<button type="button" id="member_Cbtn" class="btn btn-block-inline">등록 
+                <span class="glyphicon glyphicon-ok"></span>
+              	</button>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
 	<!-- Modal - 내정보 보기 -->
 	<div class="container">
 	  <div class="modal fade" id="infoModal" role="dialog">
@@ -166,7 +243,10 @@
 	
 	        </div>
 	        <div class="modal-footer">
-	          <button type="submit" class="btn btn-danger btn-default pull-right" data-dismiss="modal">
+			  <button class="btn btn-block-inline pull-left" id="btn_uMember" data-toggle="modal" data-target="#memberUModal">정보수정
+           		<span class="glyphicon glyphicon-ok"></span>
+			  </button>	        
+	          <button type="button" class="btn btn-danger btn-default-inline pull-right" data-dismiss="modal">
 	            <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;&nbsp;&nbsp;확인
 	          </button>
 	        </div>
@@ -194,17 +274,19 @@
 	              <input type="password" class="form-control" id="password" name="password">
 	        </div>
 			<div class="modal-footer">              
-	              <button type="button" class="btn btn-block">회원등록 
-	                <span class="glyphicon glyphicon-ok"></span>
-	              </button>
-	              <button type="button" id="login-btn" class="btn btn-block">로그인 
-	                <span class="glyphicon glyphicon-ok"></span>
-	              </button>
+				<button class="btn btn-block-inline pull-left" id="btn_cMember" data-toggle="modal" data-target="#memberModal">회원등록
+	              <span class="glyphicon glyphicon-ok"></span>
+				</button>
+				<button type="button" id="login-btn" class="btn btn-block-inline">로그인 
+				  <span class="glyphicon glyphicon-ok"></span>
+				</button>
 	        </div>
 	      </div>
+	      
 	    </div>
 	  </div>
 	</div>
 </div>  
+
 </body>
 </html>

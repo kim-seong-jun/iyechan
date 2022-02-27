@@ -17,7 +17,7 @@ import com.stone.springmvc.member.common.Member;
 public interface I회원Mapper {
 
     //회원등록
-	@Insert("insert into member(id,password,name,tel,email,post,address,detailaddress,status) values(#{id},#{password},#{name},#{tel},#{email},#{post},#{address},#{detailaddress},1)")
+	@Insert("insert into member(id,password,name,tel,email,post,address,detailAddress,status) values(#{id},#{password},#{name},#{tel},#{email},#{post},#{address},#{detailAddress},1)")
 	void 회원정보저장하다(Member 새회원);
 	
 	//회원조회

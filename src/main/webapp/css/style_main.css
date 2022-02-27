@@ -59,7 +59,7 @@
     margin-top: 15px;
     color: #555;
   }
-  .btn {
+  .btn:not(.note-btn) {
     padding: 10px 20px;
     background-color: #ffa244;
     color: #f1f1f1;

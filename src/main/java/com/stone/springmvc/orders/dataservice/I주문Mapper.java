@@ -70,6 +70,6 @@ public interface I주문Mapper {
 	void update(Orders order);
 	
 	//주문서 취소
-	@Delete("update orders set status=4 where orderNo=#{orderNo}")
+	@Delete("update orders set status=5 where orderNo=#{orderNo}")
 	void delete(int orderNo);
 }
