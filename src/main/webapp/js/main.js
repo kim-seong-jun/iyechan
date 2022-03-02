@@ -128,7 +128,6 @@ $(document).ready(function(){
 		if(회원등록하다()!==true){
 			return '';	
 		}
-		
 		let id				= $("#member_id").val();			//아이디
 		let password 		= $("#member_password").val();		//비밀번호
 		let name 			= $("#member_name").val();			//이름

@@ -20,7 +20,6 @@ import com.stone.springmvc.board.common.PageInfo;
 import com.stone.springmvc.board.service.I게시물업무자;
 import com.stone.springmvc.member.common.Member;
 
-
 @Controller
 public class 게시물컨트롤러 { 
 	@Autowired I게시물업무자 게시물업무자;
@@ -32,7 +31,6 @@ public class 게시물컨트롤러 {
 		int 로그인한회원의번호 = 0;
 		if(session!=null && session.getAttribute("회원번호")!=null) {
 			로그인한회원의번호=(int)session.getAttribute("회원번호");
-			//로그인한 회원이 작성자이므로 새게시물에 작성자를 set 해주어야함
 		} else {
 			return "reqLogin";
 		}
@@ -44,6 +42,7 @@ public class 게시물컨트롤러 {
 		
 		return "success";
 	}
+
 	//게시물목록출력
 	@PostMapping("/boards")
 	@ResponseBody 
@@ -78,17 +77,12 @@ public class 게시물컨트롤러 {
 		Boolean isWriter=false; 
 		if(session!=null) { 
 			Integer 회원번호=(Integer)session.getAttribute("회원번호"); 
-			System.out.println("회원번호 = " +회원번호);
 			if(회원번호!=null) { 
-				//로그인된 경우 
-				//로그인 회원와 게시물 작성자가 동일 인물 
 				if(회원번호==찾은게시물.getWriter().getNo()) {
 					isWriter=true; 
 				} 
 			} 
-			System.out.println("isWriter = " +isWriter);
 		}
-		  
 		BoardDetail boardDetail = new BoardDetail();
 		boardDetail.setBoard(찾은게시물);
 		boardDetail.setWriter(isWriter);
@@ -103,6 +97,7 @@ public class 게시물컨트롤러 {
 		게시물업무자.게시물을변경하다(board);
 		return "success";
 	}
+	
 	//게시물삭제
 	@GetMapping("/deleteBoard/{게시물번호}")
 	@ResponseBody 

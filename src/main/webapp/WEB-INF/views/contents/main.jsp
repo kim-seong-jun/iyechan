@@ -263,7 +263,7 @@
 	   </div>		
 	
 	<!-- Container (Friends Section) -->  
-	  <br><br><h3 class="text-center">FRIENDS</h3>  
+	  <br><br><br><br><br><br><br><h3 class="text-center">FRIENDS</h3>  
 	  <ul class="nav nav-tabs">
 	    <li class="active"><a data-toggle="tab" href="#home">아이예찬</a></li>
 	    <li><a data-toggle="tab" href="#menu1">아기밥그릇 본점</a></li>

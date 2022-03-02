@@ -16,21 +16,19 @@ import com.stone.springmvc.member.service.I회원업무자;
 public class 회원컨트롤러 {
 	@Autowired I회원업무자 회원업무자;
 	
-	//내정보 (비동기 요청)
+	//내정보
 	@PostMapping("/myinfo")
 	@ResponseBody 
 	public Member 회원자신의정보를보다(HttpSession session) {
 		int 로그인한회원의번호=(int)session.getAttribute("회원번호");
 		Member member = 회원업무자.조회하다by회원번호(로그인한회원의번호);
-		
 		return member; 
 	}
 	
 	//회원등록
 	@PostMapping("/insertMember")
 	@ResponseBody 
-	public String insertMember(@RequestBody Member newMember, HttpSession session) {
-		System.out.println("insertMember =" + newMember.getName());
+	public String insertMember(@RequestBody Member newMember) {
 		회원업무자.회원정보저장하다(newMember);
 		return "success";
 	}
